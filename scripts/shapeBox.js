@@ -1,9 +1,34 @@
-(function($, window, document, undefined){
+//(function($, window, document, undefined){
 
-function DrawApp(){}
+var DrawApp = function (){
+	this.container = $("#main");
+	this.boxButton = $("#boxButt");
+	this.circleButton = $("#circleButt");
+	this.sizeButton = $("#sizeButt");
+	this.dropButton = $("#dropButt");
+	this.menuButton = $("#menuButt");
+	this.sliders = $(".slider");
+	this.colorReadOut = $("#colorReadOut");
+	this.deleteButton = $("#deleteButt");
+	this.maskButton = $("#maskButt");
+	this.redSlider = $("#redSlider");
+	this.greenSlider = $("#greenSlider");
+	this.blueSlider = $("#blueSlider");
+	this.alphaSlider = $("#alphaSlider");
+	this.shapeListHeader = $("#shapeListHeader");
+	this.shapeList = $("#shapeList");
+	this.sortToggleButton = $("#sortToggleButt");
+	this.shapeListItem = $(".shapeListItem");
+	this.playGround = $("#playGround");
+	this.body = $("body");
+	this.window = $(window);
 
-$.extend(DrawApp.prototype, {
-	init: function(){
+	this.createSliders();
+	this.attachEvents();
+}
+
+DrawApp.prototype = {			// vs $extend()
+	/*init: function(){
 		this.container = $("#main");
 		this.boxButton = $("#boxButt");
 		this.circleButton = $("#circleButt");
@@ -28,7 +53,7 @@ $.extend(DrawApp.prototype, {
 
 		this.createSliders();
 		this.attachEvents();
-	},
+	},*/
 	createSliders: function(){
 		this.sliders.slider({
 			max: 255,
@@ -264,12 +289,12 @@ $.extend(DrawApp.prototype, {
 	randomColorNum: function(){
 		return this.randomNum(0, 255);
 	}
-});
+};
 
 var draw = new DrawApp();
 $(document).ready(function(){
 	draw.init();
 });
 
-})(jQuery, window, document);
+//})(jQuery, window, document);
 
