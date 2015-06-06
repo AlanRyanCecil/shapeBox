@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Shape Box</title>
+		<link rel="stylesheet" type="text/css" href="vendor/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="css/shapeBox.css">
+	</head>
+	<body id="body">
+		<div id="containment">
+			<div id="controlBox">
+				<div id="ShapeListHeaderBox">
+					<img id="shapeListHeaderImage" src="source/shapeBoxHeader.jpg">
+					<div class="clear"></div>
+					<button class="button" id="sortToggleButt" title="List Edit Toggle">
+						<div id="sortButtSquare"></div>
+						<div id="sortButtLine"></div>
+					</button>
+				</div>
+				<ul id="shapeList"></ul>
+				<div class="clear"></div>
+				<div id="shapeListBottom"></div>
+				<div id="sliderBar">
+					<div id="colorReadOut" title="Click to Use Color Name"></div>
+					<div class="slider" id="redSlider"><div class="ui-slider-handle" id="redHandle" title="Red Adjust"></div></div>
+					<div class="slider" id="greenSlider"><div class="ui-slider-handle" id="greenHandle" title="Green Adjust"></div></div>
+					<div class="slider" id="blueSlider"><div class="ui-slider-handle" id="blueHandle" title="Blue Adjust"></div></div>
+					<div class="slider" id="alphaSlider"><div class="ui-slider-handle" id="alpaHandle" title="Opacity"></div></div>
+				</div>
+				<div id="pad">
+					<button class="button" id="boxButt" title="Create Square"></button>
+					<button class="button" id="circleButt" title="Create Circle"></button>
+					<button class="button" id="sizeButt" title="Resize"><div id="sizeIcon"></div></button>
+					<button class="button" id="dropButt"><div id="dropIcon"><div id="dropIcon2"></div></div></button>
+					<button class="button" id="menuButt">
+						<div class="menuLine" id="lmOne"></div>
+						<div class="menuLine" id="lmTwo"></div>
+						<div class="menuLine" id="lmThree"></div>
+					</button>
+					<button class="button" id="maskButt" title="Mask"><div id="bMask"></div></button>
+					<button class="button" id="deleteButt" title="Delete"><div id="deleteIcon"></div></button>
+				</div>
+			</div>
+			<div id="main">
+				<div id="playGround"></div>
+			</div>	
+		</div>
+		<script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
+		<script type="text/javascript" src="vendor/jquery-ui.js"></script>
+		<script type="text/javascript" src="vendor/color_classifier.js"></script>
+		<script type="text/javascript" src="scripts/shapeBox.js"></script>
+
+	</body>
+</html>
