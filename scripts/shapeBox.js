@@ -64,6 +64,43 @@ DrawApp.prototype = {			// vs $extend()
 			});
 		this.alphaSlider.slider({max: 100, min: 10});
 	},
+	sliderSet: function(color, colorLabel, alpha){
+		this.redSlider.slider("value", color[0]);
+		this.greenSlider.slider("value", color[1]);
+		this.blueSlider.slider("value", color[2]);
+		this.alphaSlider.slider("value", alpha);
+		var colorLabel = colorLabel && colorLabel.toLowerCase();
+		this.colorReadOut.text(colorLabel);
+
+	},
+	slideSlider: function(event, ui){
+		var that = event.data.that,
+		    red = that.redSlider.slider("value"),
+		    green = that.greenSlider.slider("value"),
+		    blue = that.blueSlider.slider("value"),
+		    color = [red, green, blue],
+		    colorLabel = window.classifier.classify(color).toLowerCase(),
+		    alpha = that.alphaSlider.slider("value") / 100,
+		    $recent = $(".recent");
+		
+		$recent.css("background-color", "rgb(" + color + ")");
+		$recent.css("opacity", alpha);
+		if(event.type === "slidestop"){	
+			that.colorReadOut.text(colorLabel);
+		}
+	},
+	addShapeListItem: function(name, identity){
+		var listItem = $("<li />").prependTo(this.shapeList);
+
+		$("<input />", {
+			"id" : identity.replace(/-el-/g, "-li-"),
+			"class" : "shapeListItem selection",
+			"type": "text",
+			"value" : name 
+		}).appendTo(listItem);
+
+		  listItem.hide().slideDown(300);
+	},
 	createShape: function(shape, roundness){
 		$(".recent").removeClass("recent");
 		$(".selection").removeClass("selection");
@@ -96,36 +133,8 @@ DrawApp.prototype = {			// vs $extend()
 		this.sliderSet([r, g, b], colorLabel, 100);
 		this.addShapeListItem(name, identity);
 	},
-	addShapeListItem: function(name, identity){
-		var listItem = $("<li />").prependTo(this.shapeList);
-
-		$("<input />", {
-			"id" : identity.replace(/-el-/g, "-li-"),
-			"class" : "shapeListItem selection",
-			"type": "text",
-			"value" : name 
-		}).appendTo(listItem);
-
-		  listItem.hide().slideDown(300);
-	},
-	playGroundShapeClick: function(event){
-		var that = event.data.that,
-		    shape = $(this);
-		
-		that.shapeSelect(shape);
-	},
-	shapeListItemClick: function(event){
-		var $this = $(this),
-		    that = event.data.that,
-		    shapeId = $this.attr("id").replace(/li/, "el"),
-		    refShape = $(that.playGround).find(".shape[id=" + shapeId + "]");
-
-		that.shapeSelect(refShape);
-		$this.addClass("selection");
-		$this.focusout(function(){
-		var reName = $this.val();
-		refShape.attr("title", reName);
-		});
+	getListItemId: function(shape){
+		return shape.attr("id").replace(/el/, "li");
 	},
 	shapeSelect: function(shape){
 		var color = shape.css("background-color").match(/\d+/g),
@@ -145,33 +154,24 @@ DrawApp.prototype = {			// vs $extend()
 		shape.addClass("recent");
 		this.sliderSet(color, colorLabel, alpha );
 	},
-	getListItemId: function(shape){
-		return shape.attr("id").replace(/el/, "li");
-	},
-	sliderSet: function(color, colorLabel, alpha){
-		this.redSlider.slider("value", color[0]);
-		this.greenSlider.slider("value", color[1]);
-		this.blueSlider.slider("value", color[2]);
-		this.alphaSlider.slider("value", alpha);
-		var colorLabel = colorLabel && colorLabel.toLowerCase();
-		this.colorReadOut.text(colorLabel);
-
-	},
-	slideSlider: function(event, ui){
+	playGroundShapeClick: function(event){
 		var that = event.data.that,
-		    red = that.redSlider.slider("value"),
-		    green = that.greenSlider.slider("value"),
-		    blue = that.blueSlider.slider("value"),
-		    color = [red, green, blue],
-		    colorLabel = window.classifier.classify(color).toLowerCase(),
-		    alpha = that.alphaSlider.slider("value") / 100,
-		    $recent = $(".recent");
+		    shape = $(this);
 		
-		$recent.css("background-color", "rgb(" + color + ")");
-		$recent.css("opacity", alpha);
-		if(event.type === "slidestop"){	
-			that.colorReadOut.text(colorLabel);
-		}
+		that.shapeSelect(shape);
+	},
+	shapeListItemClick: function(event){
+		var $this = $(this),
+		    that = event.data.that,
+		    shapeId = $this.attr("id").replace(/li/, "el"),
+		    refShape = $(that.playGround).find(".shape[id=" + shapeId + "]");
+
+		that.shapeSelect(refShape);
+		$this.addClass("selection");
+		$this.focusout(function(){
+		var reName = $this.val();
+		refShape.attr("title", reName);
+		});
 	},
 	applyToShapeName: function(event){
 		var shape = $(".recent"),
