@@ -35,6 +35,7 @@ body {
 #playGround {
 	width: 70vw;
 	height: 46.66vw;
+	position: relative;
 	white-space: nowrap;
 	z-index: 1;
 }

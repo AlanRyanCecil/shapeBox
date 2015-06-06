@@ -1,34 +1,13 @@
 //(function($, window, document, undefined){
-
+var utility = {
+	randomNum: function(a, b){
+		return a + Math.floor(Math.random() * (b - a));
+	},
+	randomColorNum: function(){
+		return this.randomNum(0, 255);
+	}
+};
 var DrawApp = function (){
-	this.container = $("#main");
-	this.boxButton = $("#boxButt");
-	this.circleButton = $("#circleButt");
-	this.sizeButton = $("#sizeButt");
-	this.dropButton = $("#dropButt");
-	this.menuButton = $("#menuButt");
-	this.sliders = $(".slider");
-	this.colorReadOut = $("#colorReadOut");
-	this.deleteButton = $("#deleteButt");
-	this.maskButton = $("#maskButt");
-	this.redSlider = $("#redSlider");
-	this.greenSlider = $("#greenSlider");
-	this.blueSlider = $("#blueSlider");
-	this.alphaSlider = $("#alphaSlider");
-	this.shapeListHeader = $("#shapeListHeader");
-	this.shapeList = $("#shapeList");
-	this.sortToggleButton = $("#sortToggleButt");
-	this.shapeListItem = $(".shapeListItem");
-	this.playGround = $("#playGround");
-	this.body = $("body");
-	this.window = $(window);
-
-	this.createSliders();
-	this.attachEvents();
-}
-
-DrawApp.prototype = {			// vs $extend()
-	/*init: function(){
 		this.container = $("#main");
 		this.boxButton = $("#boxButt");
 		this.circleButton = $("#circleButt");
@@ -53,17 +32,9 @@ DrawApp.prototype = {			// vs $extend()
 
 		this.createSliders();
 		this.attachEvents();
-	},*/
-	createSliders: function(){
-		this.sliders.slider({
-			max: 255,
-			min: 0,
-			orientation: "vertical", 
-			stop: this.slid, // figure out how to include event data with this.
-			animate: "fast"
-			});
-		this.alphaSlider.slider({max: 100, min: 10});
-	},
+};
+
+DrawApp.prototype = {			// vs $extend()
 	attachEvents: function(){
 		this.window.on("click", this.windowClick.bind(this));
 		this.boxButton.on("click", this.boxButtonClick.bind(this));
@@ -83,103 +54,23 @@ DrawApp.prototype = {			// vs $extend()
 		this.shapeList.sortable({disabled: true, cancel: ".fixed", update: this.updateList.bind(this)});
 		$(document).tooltip({tooltipClass: "tooltip"});
 	},
-	applyToShapeName: function(event){
-		var shape = $(".recent"),
-			listItem = $(this.shapeList.find(".shapeListItem[id=" + this.getListItemId(shape) + "]")),
-			name = $(event.target).text();
-			shape.attr({title: name});
-			listItem.val(name);
-	},
-	shapeResizeStop: function(event, ui){
-		var viewWidth = event.data.that.window.width(),
-			$this = $(event.target),
-			widthUpdate = (($this.width() / viewWidth) * 100) + "vw",
-			heightUpdate = (($this.height() / viewWidth) * 100) + "vw";
-		$this.width(widthUpdate);
-		$this.height(heightUpdate);
-	},
-	dragPos: function(event, ui){
-		var that = event.data.that;
-		    viewWidth = that.window.width(),
-		    topPos = ((ui.position.top / viewWidth) * 100) + "vw",
-		    leftPos = ((ui.position.left / viewWidth) * 100) + "vw";
-		$(this).css({top: topPos, left: leftPos});
-	},
-	tooltipToggle: function(){
-		if($(document).tooltip("option", "disabled")){
-			$(document).tooltip({disabled: false});
-		} else {
-			$(document).tooltip({disabled: true});
-		}
-		console.log($(document).tooltip("option", "disabled"));
-	},
-	shapeSort: function(){
-
-	},
-	updateList: function(event, ui){
-		this.playGround.find(".shape").sort(function(a, b){return a - b});
-	},
-	windowClick: function(event){
-		var clickTarget = event.target.id,
-			clicklist = ["", "playGround", "shapeBoxLogo", "shapeListContainer"];
-		if(clicklist.some(function(x){return x === clickTarget;})){ 
-		this.deselectAll();
-	  }
-	  console.log(clickTarget);
-	 },
-	 deselectAll: function(){
-	 	$(".selection.shape").resizable({disabled: true});
-	 	$(".selection").removeClass("selection");
-		$(".resizable").removeClass("resizable");
-		$(".recent").removeClass("recent");
-		this.sliderSet([0, 0, 0], null, 0);
-	},
-	boxButtonClick: function(){
-		this.createShape("box");
-	},
-	circleButtonClick: function(){
-		this.createShape("circle", 50);
-	},
-	sizeButtonClick: function(){
-		var $selection = $(".selection.shape");
-		if($selection.resizable("option", "disabled")){
-			$selection
-				.resizable("option", "disabled", false)
-				.addClass("resizable");
-		} else {
-			$selection
-				.resizable("option", "disabled", true)
-				.removeClass("resizable");
-		}
-	},
-	dropButtonClick: function(){
-		$(".shape").toggleClass("dropShadow");
-	},
-	deleteButtonClick: function(){
-		$(".shape.selection").remove();
-		$(".shapeListItem.selection").parent().slideUp(300);
-		this.sliderSet([0, 0, 0], null, 0);
-	},
-	maskButtonClick: function(){
-		this.playGround.toggleClass("pgMask");
-		this.body.toggleClass("bodyMask");
-	},
-	sortToggle: function(event){
-		var that = event.data.that;
-		if(that.shapeList.sortable("option", "disabled")){
-			that.shapeList.sortable({disabled: false});
-		} else {
-			that.shapeList.sortable({disabled: true});
-		}
-		$(this).toggleClass("rotate90");
+	createSliders: function(){
+		this.sliders.slider({
+			max: 255,
+			min: 0,
+			orientation: "vertical", 
+			stop: this.slid, // figure out how to include event data with this.
+			animate: "fast"
+			});
+		this.alphaSlider.slider({max: 100, min: 10});
 	},
 	createShape: function(shape, roundness){
 		$(".recent").removeClass("recent");
 		$(".selection").removeClass("selection");
 		var shapeSize = 7, 
-			r = this.randomColorNum(),
-		    g = this.randomColorNum(),
-		    b = this.randomColorNum(),
+			r = utility.randomColorNum(),
+		    g = utility.randomColorNum(),
+		    b = utility.randomColorNum(),
 		    color = [r, g, b],
 		    colorLabel = window.classifier.classify(color),
 		    shapeCount = this.playGround.find($(".shape")).length,
@@ -195,8 +86,8 @@ DrawApp.prototype = {			// vs $extend()
 			  	  .css({
 			  	  	backgroundColor: "rgb(" + color + ")",
 			  		position: "absolute",
-			  		top: "43vw",
-			  		left: "23vw",
+			  		top: "38.5vw",
+			  		left: "1.2vw",
 			  		width: shapeSize + "vw",
 			  		height: shapeSize + "vw",
 			  		borderRadius: bordRad + "vw"})
@@ -258,12 +149,12 @@ DrawApp.prototype = {			// vs $extend()
 		return shape.attr("id").replace(/el/, "li");
 	},
 	sliderSet: function(color, colorLabel, alpha){
-			this.redSlider.slider("value", color[0]);
-			this.greenSlider.slider("value", color[1]);
-			this.blueSlider.slider("value", color[2]);
-			this.alphaSlider.slider("value", alpha);
-			var colorLabel = colorLabel && colorLabel.toLowerCase();
-			this.colorReadOut.text(colorLabel);
+		this.redSlider.slider("value", color[0]);
+		this.greenSlider.slider("value", color[1]);
+		this.blueSlider.slider("value", color[2]);
+		this.alphaSlider.slider("value", alpha);
+		var colorLabel = colorLabel && colorLabel.toLowerCase();
+		this.colorReadOut.text(colorLabel);
 
 	},
 	slideSlider: function(event, ui){
@@ -280,20 +171,91 @@ DrawApp.prototype = {			// vs $extend()
 		$recent.css("opacity", alpha);
 		if(event.type === "slidestop"){	
 			that.colorReadOut.text(colorLabel);
-			console.log(event);
 		}
 	},
-	randomNum: function(a, b){
-		return a + Math.floor(Math.random() * (b - a));
+	applyToShapeName: function(event){
+		var shape = $(".recent"),
+			listItem = $(this.shapeList.find(".shapeListItem[id=" + this.getListItemId(shape) + "]")),
+			name = $(event.target).text();
+			shape.attr({title: name});
+			listItem.val(name);
 	},
-	randomColorNum: function(){
-		return this.randomNum(0, 255);
+	shapeResizeStop: function(event, ui){
+		var viewWidth = event.data.that.window.width(),
+			$this = $(event.target),
+			widthUpdate = (($this.width() / viewWidth) * 100) + "vw",
+			heightUpdate = (($this.height() / viewWidth) * 100) + "vw";
+		$this.width(widthUpdate);
+		$this.height(heightUpdate);
+	},
+	dragPos: function(event, ui){
+		var that = event.data.that;
+		    viewWidth = that.window.width(),
+		    topPos = ((ui.position.top / viewWidth) * 100) + "vw",
+		    leftPos = ((ui.position.left / viewWidth) * 100) + "vw";
+		$(this).css({top: topPos, left: leftPos});
+	},
+	updateList: function(event, ui){
+		this.playGround.find(".shape").sort(function(a, b){return a - b});
+	},
+	deselectAll: function(){
+	 	$(".selection.shape").resizable({disabled: true});
+	 	$(".selection").removeClass("selection");
+		$(".resizable").removeClass("resizable");
+		$(".recent").removeClass("recent");
+		this.sliderSet([0, 0, 0], null, 0);
+	},
+	windowClick: function(event){
+		var clickTarget = event.target.id,
+			clicklist = ["", "playGround", "shapeBoxLogo", "shapeListContainer"];
+		if(clicklist.some(function(x){return x === clickTarget;})){ 
+		this.deselectAll();
+	  }
+	},
+	boxButtonClick: function(){
+		this.createShape("box");
+	},
+	circleButtonClick: function(){
+		this.createShape("circle", 50);
+	},
+	sizeButtonClick: function(){
+		var $selection = $(".selection.shape");
+		if($selection.resizable("option", "disabled")){
+			$selection
+				.resizable("option", "disabled", false)
+				.addClass("resizable");
+		} else {
+			$selection
+				.resizable("option", "disabled", true)
+				.removeClass("resizable");
+		}
+	},
+	dropButtonClick: function(){
+		$(".shape").toggleClass("dropShadow");
+	},
+	deleteButtonClick: function(){
+		$(".shape.selection").remove();
+		$(".shapeListItem.selection").parent().slideUp(300);
+		this.sliderSet([0, 0, 0], null, 0);
+	},
+	maskButtonClick: function(){
+		this.playGround.toggleClass("pgMask");
+		this.body.toggleClass("bodyMask");
+	},
+	sortToggle: function(event){
+		var that = event.data.that;
+		if(that.shapeList.sortable("option", "disabled")){
+			that.shapeList.sortable({disabled: false});
+		} else {
+			that.shapeList.sortable({disabled: true});
+		}
+		$(this).toggleClass("rotate90");
 	}
 };
 
-var draw = new DrawApp();
+var draw;
 $(document).ready(function(){
-	draw.init();
+	draw = new DrawApp();
 });
 
 //})(jQuery, window, document);
