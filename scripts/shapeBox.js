@@ -40,7 +40,6 @@ DrawApp.prototype = {			// vs $extend()
 		this.boxButton.on("click", this.boxButtonClick.bind(this));
 		this.circleButton.on("click", this.circleButtonClick.bind(this));
 		this.sizeButton.on("click", this.sizeButtonClick.bind(this));
-		this.dropButton.on("click", this.dropButtonClick.bind(this));
 		this.menuButton.on("click", this.tooltipToggle);
 		this.sliders.on("slide slidestop", {that: this}, this.slideSlider);
 		this.deleteButton.on("click", this.deleteButtonClick.bind(this));
@@ -229,9 +228,6 @@ DrawApp.prototype = {			// vs $extend()
 				.resizable("option", "disabled", true)
 				.removeClass("resizable");
 		}
-	},
-	dropButtonClick: function(){
-		$(".shape").toggleClass("dropShadow");
 	},
 	deleteButtonClick: function(){
 		$(".shape.selection").remove();
