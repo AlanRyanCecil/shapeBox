@@ -51,6 +51,7 @@ DrawApp.prototype = {			// vs $extend()
 		this.playGround.on("dragstop", ".shape", {that: this}, this.dragPos);
 		this.playGround.on("resizestop", {that: this}, this.shapeResizeStop);
 		this.shapeList.sortable({disabled: true, cancel: ".fixed", update: this.updateList.bind(this)});
+		this.shapeList.on("sortstop", this.arrangeShapes.bind(this));
 		$(document).tooltip({tooltipClass: "tooltip"});
 	},
 	createSliders: function(){
@@ -246,6 +247,14 @@ DrawApp.prototype = {			// vs $extend()
 			that.shapeList.sortable({disabled: true});
 		}
 		$(this).toggleClass("rotate90");
+	},
+	arrangeShapes: function(){
+		var list = this.shapeList.find(".shapeListItem");
+		for (var i = 0; i < list.length; i++){
+			var shapeId = $(list[i]).attr("id").replace(/li/, "el"),
+				shape = this.playGround.find(".shape[id=" + shapeId + "]");
+			shape.insertAfter("#blank");
+		}
 	}
 };
 
