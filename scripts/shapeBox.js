@@ -23,12 +23,14 @@ var DrawApp = function (){
 		this.blueSlider = $("#blueSlider");
 		this.alphaSlider = $("#alphaSlider");
 		this.shapeListHeader = $("#shapeListHeader");
+		this.shapeBoxLogo = $("#shapeListHeaderImage");
 		this.shapeList = $("#shapeList");
 		this.sortToggleButton = $("#sortToggleButt");
 		this.shapeListItem = $(".shapeListItem");
-		this.playGround = $("#playGround");
+		this.playground = $("#playground");
 		this.body = $("body");
 		this.window = $(window);
+		localStorage.playgroundState = localStorage.playgroundState || null;
 
 		this.createSliders();
 		this.attachEvents();
@@ -36,6 +38,7 @@ var DrawApp = function (){
 
 DrawApp.prototype = {			// vs $extend()
 	attachEvents: function(){
+		this.window.on("load", this.recallState.bind(this));
 		this.window.on("click", this.windowClick.bind(this));
 		this.boxButton.on("click", this.boxButtonClick.bind(this));
 		this.circleButton.on("click", this.circleButtonClick.bind(this));
@@ -47,12 +50,23 @@ DrawApp.prototype = {			// vs $extend()
 		this.shapeList.on("click", ".shapeListItem", {that: this}, this.shapeListItemClick);
 		this.sortToggleButton.on("click", {that: this}, this.sortToggle);
 		this.colorReadOut.on("click", this.applyToShapeName.bind(this));
-		this.playGround.on("click", ".shape", {that: this}, this.playGroundShapeClick);
-		this.playGround.on("dragstop", ".shape", {that: this}, this.dragPos);
-		this.playGround.on("resizestop", {that: this}, this.shapeResizeStop);
+		this.playground.on("click", ".shape", {that: this}, this.playgroundShapeClick);
+		this.playground.on("dragstop", ".shape", {that: this}, this.dragPos);
+		this.playground.on("resizestop", {that: this}, this.shapeResizeStop);
 		this.shapeList.sortable({disabled: true, cancel: ".fixed", update: this.updateList.bind(this)});
 		this.shapeList.on("sortstop", this.arrangeShapes.bind(this));
+		this.shapeBoxLogo.on("click", this.saveCurrentState.bind(this));
 		$(document).tooltip({tooltipClass: "tooltip"});
+	},
+	saveCurrentState: function(){
+		localStorage.playgroundState = JSON.stringify(this.playground.html());
+	},
+	recallState: function(){
+		var preState = JSON.parse(localStorage.playgroundState);
+		this.playground.html(preState);
+		this.playground.find(".shape")
+			.draggable()
+			.resizable();
 	},
 	createSliders: function(){
 		this.sliders.slider({
@@ -62,7 +76,7 @@ DrawApp.prototype = {			// vs $extend()
 			stop: this.slid, // figure out how to include event data with this.
 			animate: "fast"
 			});
-		this.alphaSlider.slider({max: 100, min: 10});
+		this.alphaSlider.slider({max: 100, min: 5});
 	},
 	sliderSet: function(color, colorLabel, alpha){
 		this.redSlider.slider("value", color[0]);
@@ -110,7 +124,7 @@ DrawApp.prototype = {			// vs $extend()
 		    b = utility.randomColorNum(),
 		    color = [r, g, b],
 		    colorLabel = window.classifier.classify(color),
-		    shapeCount = this.playGround.find($(".shape")).length,
+		    shapeCount = this.playground.find($(".shape")).length,
 		    name = colorLabel + " " + shape,
 		    identity = shape + "-el-" + shapeCount,
 		    bordRad = roundness || .2;
@@ -119,7 +133,7 @@ DrawApp.prototype = {			// vs $extend()
 				"id": identity, 
 				"class": "shape selection recent " + shape,
 				"title": name
-				}).appendTo(this.playGround)
+				}).appendTo(this.playground)
 			  	  .css({
 			  	  	backgroundColor: "rgb(" + color + ")",
 			  		position: "absolute",
@@ -154,7 +168,7 @@ DrawApp.prototype = {			// vs $extend()
 		shape.addClass("recent");
 		this.sliderSet(color, colorLabel, alpha );
 	},
-	playGroundShapeClick: function(event){
+	playgroundShapeClick: function(event){
 		var that = event.data.that,
 		    shape = $(this);
 		
@@ -164,7 +178,7 @@ DrawApp.prototype = {			// vs $extend()
 		var $this = $(this),
 		    that = event.data.that,
 		    shapeId = $this.attr("id").replace(/li/, "el"),
-		    refShape = $(that.playGround).find(".shape[id=" + shapeId + "]");
+		    refShape = $(that.playground).find(".shape[id=" + shapeId + "]");
 
 		that.shapeSelect(refShape);
 		$this.addClass("selection");
@@ -196,7 +210,7 @@ DrawApp.prototype = {			// vs $extend()
 		$(this).css({top: topPos, left: leftPos});
 	},
 	updateList: function(event, ui){
-		this.playGround.find(".shape").sort(function(a, b){return a - b});
+		this.playground.find(".shape").sort(function(a, b){return a - b});
 	},
 	deselectAll: function(){
 	 	$(".selection.shape").resizable({disabled: true});
@@ -207,10 +221,11 @@ DrawApp.prototype = {			// vs $extend()
 	},
 	windowClick: function(event){
 		var clickTarget = event.target.id,
-			clicklist = ["", "playGround", "shapeBoxLogo", "shapeListContainer"];
+			clicklist = ["", "playground", "shapeBoxLogo", "shapeListContainer"];
 		if(clicklist.some(function(x){return x === clickTarget;})){ 
 		this.deselectAll();
 	  }
+	  console.log(clickTarget);
 	},
 	boxButtonClick: function(){
 		this.createShape("box");
@@ -236,7 +251,7 @@ DrawApp.prototype = {			// vs $extend()
 		this.sliderSet([0, 0, 0], null, 0);
 	},
 	maskButtonClick: function(){
-		this.playGround.toggleClass("pgMask");
+		this.playground.toggleClass("pgMask");
 		this.body.toggleClass("bodyMask");
 	},
 	sortToggle: function(event){
@@ -252,7 +267,7 @@ DrawApp.prototype = {			// vs $extend()
 		var list = this.shapeList.find(".shapeListItem");
 		for (var i = 0; i < list.length; i++){
 			var shapeId = $(list[i]).attr("id").replace(/li/, "el"),
-				shape = this.playGround.find(".shape[id=" + shapeId + "]");
+				shape = this.playground.find(".shape[id=" + shapeId + "]");
 			shape.insertAfter("#blank");
 		}
 	}
