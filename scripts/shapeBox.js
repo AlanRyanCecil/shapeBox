@@ -31,6 +31,7 @@ var DrawApp = function (){
 		this.body = $("body");
 		this.window = $(window);
 		localStorage.playgroundState = localStorage.playgroundState || null;
+		localStorage.shapeListState = localStorage.shapeListState || null;
 
 		this.createSliders();
 		this.attachEvents();
@@ -60,10 +61,13 @@ DrawApp.prototype = {			// vs $extend()
 	},
 	saveCurrentState: function(){
 		localStorage.playgroundState = JSON.stringify(this.playground.html());
+		localStorage.shapeListState = JSON.stringify(this.shapeList.html());
 	},
 	recallState: function(){
-		var preState = JSON.parse(localStorage.playgroundState);
-		this.playground.html(preState);
+		var prePlaygroundState = JSON.parse(localStorage.playgroundState),
+			preListState = JSON.parse(localStorage.shapeListState);
+		this.playground.html(prePlaygroundState);
+		this.shapeList.html(preListState);
 		this.playground.find(".shape")
 			.draggable()
 			.resizable();
