@@ -66,11 +66,11 @@ DrawApp.prototype = {			// vs $extend()
 	recallState: function(){
 		var prePlaygroundState = JSON.parse(localStorage.playgroundState),
 			preListState = JSON.parse(localStorage.shapeListState);
-		this.playground.html(prePlaygroundState);
+		this.playground.html(prePlaygroundState)
+			.find(".shape").draggable().resizable();
 		this.shapeList.html(preListState);
-		this.playground.find(".shape")
-			.draggable()
-			.resizable();
+		console.log($(".shape").resizable("option"));
+		console.log(JSON.parse(localStorage.playgroundState));
 	},
 	createSliders: function(){
 		this.sliders.slider({
@@ -147,7 +147,9 @@ DrawApp.prototype = {			// vs $extend()
 			  		height: shapeSize + "vw",
 			  		borderRadius: bordRad + "vw"})
 			  	  .draggable({scroll: false})
-			  	  .resizable({disabled: true});
+			  	  .resizable({disabled: true, 
+			  	  			  minWidth: 1,
+			  	  			  minHeight: 1});
 		this.sliderSet([r, g, b], colorLabel, 100);
 		this.addShapeListItem(name, identity);
 	},
@@ -177,6 +179,7 @@ DrawApp.prototype = {			// vs $extend()
 		    shape = $(this);
 		
 		that.shapeSelect(shape);
+		console.log(shape.resizable("option"));
 	},
 	shapeListItemClick: function(event){
 		var $this = $(this),
@@ -238,7 +241,7 @@ DrawApp.prototype = {			// vs $extend()
 		this.createShape("circle", 50);
 	},
 	sizeButtonClick: function(){
-		var $selection = $(".selection.shape");
+		var $selection = this.playground.find(".shape.selection");//$(".selection.shape");
 		if($selection.resizable("option", "disabled")){
 			$selection
 				.resizable("option", "disabled", false)
