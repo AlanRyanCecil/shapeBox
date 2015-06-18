@@ -39,7 +39,7 @@ var DrawApp = function (){
 
 DrawApp.prototype = {			// vs $extend()
 	attachEvents: function(){
-		this.window.on("load", this.recallState.bind(this));
+		//this.window.on("load", this.recallState.bind(this));
 		this.window.on("click", this.windowClick.bind(this));
 		this.boxButton.on("click", this.boxButtonClick.bind(this));
 		this.circleButton.on("click", this.circleButtonClick.bind(this));
@@ -60,6 +60,7 @@ DrawApp.prototype = {			// vs $extend()
 		$(document).tooltip({tooltipClass: "tooltip"});
 	},
 	saveCurrentState: function(){
+		localStorage.clear();
 		localStorage.playgroundState = JSON.stringify(this.playground.html());
 		localStorage.shapeListState = JSON.stringify(this.shapeList.html());
 	},
@@ -67,10 +68,8 @@ DrawApp.prototype = {			// vs $extend()
 		var prePlaygroundState = JSON.parse(localStorage.playgroundState),
 			preListState = JSON.parse(localStorage.shapeListState);
 		this.playground.html(prePlaygroundState)
-			.find(".shape").draggable().resizable();
+			.find(".shape").draggable();
 		this.shapeList.html(preListState);
-		console.log($(".shape").resizable("option"));
-		console.log(JSON.parse(localStorage.playgroundState));
 	},
 	createSliders: function(){
 		this.sliders.slider({
@@ -254,7 +253,7 @@ DrawApp.prototype = {			// vs $extend()
 	},
 	deleteButtonClick: function(){
 		$(".shape.selection").remove();
-		$(".shapeListItem.selection").parent().slideUp(300);
+		$(".shapeListItem.selection").parent().slideUp(300).remove();
 		this.sliderSet([0, 0, 0], null, 0);
 	},
 	maskButtonClick: function(){
@@ -277,6 +276,7 @@ DrawApp.prototype = {			// vs $extend()
 				shape = this.playground.find(".shape[id=" + shapeId + "]");
 			shape.insertAfter("#blank");
 		}
+		console.log(list);
 	}
 };
 
