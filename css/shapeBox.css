@@ -352,5 +352,5 @@ button:focus {
 }
 
 .ui-resizable-handle {
-	display: none;
+	background-image: none;
 }
